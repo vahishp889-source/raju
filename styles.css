@@ -1,0 +1,50 @@
+body {
+    background: linear-gradient(135deg, #0B0C10 0%, #1A1B26 100%);
+    color: #E0E0E0;
+    font-family: 'Montserrat', sans-serif;
+    padding-top: 70px;
+}
+
+h1, h2 {
+    font-weight: bold;
+}
+
+.navbar {
+    background: #1A1B26;
+    border-bottom: 1px solid #333;
+    box-shadow: 0 4px 8px rgba(0, 255, 163, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.navbar-brand {
+    color: #00FFA3 !important;
+    font-weight: bold;
+}
+
+.nav-link {
+    color: #E0E0E0 !important;
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+    color: #00FFA3 !important;
+}
+
+.navbar-toggler {
+    border-color: #00FFA3;
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(0, 255, 163, 1)' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+.role-btn {
+    width: 220px;
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    background: linear-gradient(45deg, #00FFA3, #2979FF);
+}
+.image-index{
+    width: 60px;
+}

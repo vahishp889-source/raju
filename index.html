@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Grievance Portal - Choose Role</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 py-2 shadow-sm fixed-top">
+        <img class="image-index" src="images.png">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navMenu">
+            
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container vh-100 d-flex flex-column justify-content-center align-items-center text-center">
+        <h1 class="mb-5">Your Voice. Our Priority.</h1>
+        <button class="btn role-btn mb-4" onclick="window.location.href='student.html'">Student</button>
+        <button class="btn role-btn" onclick="window.location.href='faculty-login.html'">Faculty</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        function navigate(role) {
+            localStorage.setItem("userRole", role);
+            window.location.href = "signin.html";
+        }
+    </script>
+
+     
+</body>
+</html>
