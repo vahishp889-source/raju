@@ -1,82 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Submit Grievance</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Grievance</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 py-2 shadow-sm fixed-top">
-        <a class="navbar-brand" href="index.html">Grievance Portal</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navMenu">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                <li class="nav-item"><a class="nav-link active" href="student-grievance.html">Submit Grievance</a></li>
-                <li class="nav-item"><a class="nav-link" href="#" onclick="logout()">Logout</a></li>
-            </ul>
-        </div>
-    </nav>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 py-2 shadow-sm fixed-top">
+    <img class="image-index " src="images.png">
+    <a class="navbar-brand" href="index.html">Grievance Portal</a>
+    <button class="btn btn-danger ms-auto" onclick="logout()">Logout</button>
+  </nav>
 
-    <div class="container mt-5 pt-4">
-        <h2 class="text-center mb-4">Submit Your Grievance</h2>
-        <form onsubmit="return submitGrievance()" class="form-container p-4 rounded mx-auto" style="max-width: 600px;">
-            <div class="mb-3">
-                <label for="category" class="form-label">Category</label>
-                <select id="category" class="form-select" required>
-                    <option value="">Select category</option>
-                    <option value="Academic">Academic</option>
-                    <option value="Administrative">Administrative</option>
-                    <option value="Others">Others</option>
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="description" class="form-label">Description</label>
-                <textarea id="description" class="form-control" rows="5" placeholder="Write your grievance here..." required></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary w-100">Submit</button>
-        </form>
-    </div>
+  <div class="container mt-5 pt-4">
+    <h2 class="text-center mb-4">Submit Grievance</h2>
+    <form id="grievanceForm" class="p-4 rounded bg-dark text-light shadow">
+      <div class="mb-3">
+        <label for="name" class="form-label">Your Name</label>
+        <input type="text" id="name" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label for="category" class="form-label">Category</label>
+        <select id="category" class="form-control" required>
+          <option value="Academic">Academic</option>
+          <option value="Administrative">Administrative</option>
+          <option value="Infrastructure">Infrastructure</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea id="description" class="form-control" rows="4" required></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary w-100">Submit</button>
+    </form>
+  </div>
 
-    <script src="script.js"></script>
-    <script>
-        window.onload = () => {
-            const role = localStorage.getItem("userRole");
-            if (role !== "student") {
-                alert("Access denied.");
-                window.location.href = "index.html";
-                return;
-            }
-        };
-
-        function submitGrievance() {
-            const category = document.getElementById("category").value;
-            const description = document.getElementById("description").value.trim();
-            if (!category || !description) {
-                alert("Please fill all fields.");
-                return false;
-            }
-
-            const grievances = JSON.parse(localStorage.getItem("grievances") || "[]");
-            const newGrievance = {
-                id: Date.now(),
-                name: localStorage.getItem("userEmail"),
-                category,
-                description,
-                date: new Date().toISOString().split('T')[0],
-                resolved: false
-            };
-            grievances.push(newGrievance);
-            localStorage.setItem("grievances", JSON.stringify(grievances));
-            alert("Grievance submitted successfully!");
-            document.getElementById("category").value = "";
-            document.getElementById("description").value = "";
-            return false;
-        }
-    </script>
+  <script src="script.js"></script>
+  <script>
+    document.getElementById("grievanceForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const grievance = {
+        id: Date.now().toString(),
+        name: document.getElementById("name").value,
+        category: document.getElementById("category").value,
+        description: document.getElementById("description").value,
+        date: new Date().toLocaleString(),
+        resolved: false
+      };
+      const grievances = await loadGrievances();
+      grievances.push(grievance);
+      await saveGrievances(grievances);
+      alert("✅ Grievance submitted successfully!");
+      document.getElementById("grievanceForm").reset();
+    });
+  </script>
 </body>
 </html>
 
