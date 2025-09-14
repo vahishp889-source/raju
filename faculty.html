@@ -1,82 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Faculty Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Faculty Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 py-2 shadow-sm fixed-top">
-        <a class="navbar-brand" href="index.html">Grievance Portal</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navMenu">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                <li class="nav-item"><a class="nav-link active" href="faculty.html">Dashboard</a></li>
-                <li class="nav-item"><a class="nav-link" href="#" onclick="logout()">Logout</a></li>
-            </ul>
-        </div>
-    </nav>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 py-2 shadow-sm fixed-top">
+    <img class="image-index " src="images.png">
+    <a class="navbar-brand" href="index.html">Grievance Portal</a>
+    <button class="btn btn-danger ms-auto" onclick="logout()">Logout</button>
+  </nav>
 
-    <div class="container mt-5 pt-4">
-        <h2 class="text-center mb-4">Faculty Dashboard</h2>
-        <div id="grievanceList" class="row g-3"></div>
+  <div class="container vh-100 mt-5 pt-4">
+    <h2 class="text-center mb-4">Faculty Dashboard</h2>
+    <div id="grievanceList" class="row g-3">
+        <div class="text-center d-flex flex-row align-items-center justify-content-center"  style="height: 60vh;">
+  <div class="spinner-border" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
     </div>
+  </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="script.js"></script>
-    <script>
-        window.onload = () => {
-            const role = localStorage.getItem("userRole");
-            if (role !== "faculty") {
-                alert("Access denied.");
-                window.location.href = "index.html";
-                return;
-            }
-            loadFacultyDashboard();
-        };
+  <script src="script.js"></script>
+ <script>
+    let grievanceListEl=document.getElementById("grievanceList");
+  window.onload = () => {
+    const role = localStorage.getItem("userRole");
+    if (role !== "faculty") {
+      alert("Access denied.");
+      window.location.href = "index.html";
+      return;
+    }
+    loadFacultyDashboard();
+  };
 
-        function loadFacultyDashboard() {
-            const grievances = JSON.parse(localStorage.getItem("grievances")) || [];
-            const container = document.getElementById("grievanceList");
-            container.innerHTML = "";
-            if (grievances.length === 0) {
-                container.innerHTML = "<p class='text-center'>No grievances available.</p>";
-                return;
-            }
-            grievances.forEach((grievance, index) => {
-                const card = document.createElement("div");
-                card.className = "col-md-6";
-                card.innerHTML = `
-                    <div class="card bg-dark text-light">
-                        <div class="card-body">
-                            <h5 class="card-title">${grievance.name}</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">${grievance.category}</h6>
-                            <p class="card-text">${grievance.description}</p>
-                            <p class="card-text"><small class="text-muted">${grievance.date}</small></p>
-                            <button class="btn btn-success btn-sm" onclick="resolveGrievance(${grievance.id})" ${grievance.resolved ? 'disabled' : ''}>
-                                ${grievance.resolved ? 'Resolved' : 'Resolve'}
-                            </button>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
+  async function loadFacultyDashboard() {
+    const grievances = await loadGrievances();
+    const container = document.getElementById("grievanceList");
+    container.innerHTML = "";
 
-        function resolveGrievance(id) {
-            const grievances = JSON.parse(localStorage.getItem("grievances")) || [];
-            const index = grievances.findIndex(g => g.id === id);
-            if (index !== -1) {
-                grievances[index].resolved = true;
-                localStorage.setItem("grievances", JSON.stringify(grievances));
-                loadFacultyDashboard();
-                alert("Grievance marked as resolved!");
-            }
-        }
-    </script>
+    if (grievances.length === 0) {
+      grievanceListEl.textContent = "EMPTY";
+      return;
+    }
+
+    grievances.forEach((grievance) => {
+      const card = document.createElement("div");
+      card.className = "col-md-4";
+      card.innerHTML = `
+        <div class="card bg-dark text-light shadow">
+          <div class="card-body">
+            <div class="texTime">
+                <p class="card-text date-size">${grievance.date}</p></div>
+            <h5 class="card-title">Name: ${grievance.name}</h5>
+            <h6 class="card-subtitle mb-2"> Category: ${grievance.category}</h6>
+            <p class="card-text">Description: ${grievance.description}</p>
+            <br>
+            <div class="d-flex gap-2">
+              <button class="btn btn-success btn-sm" onclick="resolveGrievance('${grievance.id}')"
+                ${grievance.resolved ? 'disabled' : ''}>
+                ${grievance.resolved ? 'Resolved' : 'Resolve'}
+              </button>
+              <button class="btn btn-danger btn-sm" onclick="deleteGrievance('${grievance.id}')">
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  async function resolveGrievance(id) {
+    const grievances = await loadGrievances();
+    const index = grievances.findIndex(g => g.id === id);
+    if (index !== -1) {
+      grievances[index].resolved = true;
+      await saveGrievances(grievances);
+      loadFacultyDashboard();
+      alert("✅ Grievance marked as resolved!");
+    }
+  }
+
+  async function deleteGrievance(id) {
+    if (!confirm("⚠️ Are you sure you want to delete this grievance?")) return;
+    const grievances = await loadGrievances();
+    const updated = grievances.filter(g => g.id !== id);
+    await saveGrievances(updated);
+    loadFacultyDashboard();
+    alert("🗑️ Grievance deleted successfully!");
+  }
+</script>
+
 </body>
 </html>
